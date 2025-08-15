@@ -68,11 +68,11 @@ GET    /api/pets
 GET    /api/pets/:pid
 POST   /api/pets
 ```
-- Las mascotas incluyen: `name`, `species` y `owner` (ObjectId del usuario dueño, opcional).
+- Las mascotas incluyen: `name`y `species`.
 
 ---
 
-### Mocks (nueva funcionalidad)
+### Mocks
 **Ruta base:** `/api/mocks`
 
 ```http
