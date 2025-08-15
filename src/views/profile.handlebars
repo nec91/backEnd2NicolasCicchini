@@ -1,0 +1,35 @@
+<div>
+    <h1>Tu perfil (sin datos sensibles)</h1>
+    <p>{{user.name}}</p>
+    <p>{{user.email}}</p>
+    <p>{{user.age}}</p>
+
+    <br>
+
+    {{#if user.isAdmin}}
+    <p> Admin-dashBoard: <a href="/users/dashboard-admin">Ingresar</a></p>
+    {{/if}}
+
+    <p><a href="/api/sessions/logout">Logout</a></p>
+
+    <br><br>
+
+    <form action="/users/purchase/products" method="GET">
+        <button type="submit">🛒 Iniciar compra</button>
+    </form>
+
+    <br><br>
+
+    <button id="goToCartBtn">🛒 Ir a mi carrito</button>
+</div>
+
+<script>
+    document.getElementById("goToCartBtn").addEventListener("click", () => {
+        const cartId = "{{user.cart}}";
+        if (cartId && cartId !== "null") {
+            window.location.href = `/users/purchase/cart?cartId=${cartId}`;
+        } else {
+            alert("No tienes un carrito creado.");
+        }
+    });
+</script>

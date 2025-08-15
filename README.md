@@ -1,107 +1,153 @@
-
 # Project Cicchini
 
-Este proyecto es una API para la gestión de productos y carritos de compras, permitiendo agregar, modificar, eliminar y listar productos almacenados en un archivo JSON. Se utiliza Express.js para el manejo de rutas y fs para la manipulación de archivos.
+Este proyecto es una **API educativa** desarrollada como parte del curso de **Back End III de CoderHouse**, originalmente orientada a la gestión de productos y carritos de compras, y extendida para incluir **gestión de usuarios, mascotas** y **generación de datos de prueba (mocks)** con conexión a MongoDB Atlas.
 
-Dicho proyecto se realiza a modo educativo, para curso de Back end I de CoderHouse.
+La API permite:
+- Agregar, modificar, eliminar y listar productos.
+- Crear y administrar carritos de compras.
+- Gestionar usuarios y mascotas.
+- Generar datos ficticios (usuarios y mascotas) para pruebas, con contraseñas encriptadas y formatos compatibles con MongoDB.
 
+---
 
 ## API Reference
 
-#### Routes
-
-#### Products
-
-
+### Products
 ```http
-GET /api/products → Obtener todos los productos paginados.
-
-GET /api/products/:pid → Obtener un producto por su ID.
-
-GET /api/products?page=<numero de pagina>&limit=<limite como numero>&sort=<orden>&query=<title> → Obtener productos paginados pasando por parametros como se desea ordenar.
-
-POST /api/products → Agregar un nuevo producto.
-
-PUT /api/products/:pid → Modificar un producto.
-
-DELETE /api/products/:pid → Eliminar un producto.
+GET    /api/products
+GET    /api/products/:pid
+GET    /api/products?page=<n>&limit=<n>&sort=<asc|desc>&query=<title>
+POST   /api/products
+PUT    /api/products/:pid
+DELETE /api/products/:pid
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `title` | `string` | **Required**. Título del producto |
-| `description` | `string` | **Optional**. Descripción del producto |
-| `code` | `string` / `number` | **Required**. Código del producto |
-| `price` | `number` | **Required**. Precio del producto |
-| `stock` | `number` | **Required**. Stock del producto |
-| `category` | `string` | **Required**. Categoría a la que pertenece el producto |
-| `thumbnail` | `link` | **Optional**. Referencia del producto |
+| Parameter     | Type                 | Description |
+|---------------|----------------------|-------------|
+| `title`       | `string`             | **Required**. Título del producto |
+| `description` | `string`             | **Optional**. Descripción del producto |
+| `code`        | `string` / `number`  | **Required**. Código del producto |
+| `price`       | `number`             | **Required**. Precio del producto |
+| `stock`       | `number`             | **Required**. Stock del producto |
+| `category`    | `string`             | **Required**. Categoría a la que pertenece el producto |
+| `thumbnail`   | `link`               | **Optional**. Referencia del producto |
 
-#### Carts
+---
+
+### Carts
 ```http
-POST /api/carts → Crear un nuevo carrito.
-
-POST /api/carts/:cid/products/:pid → Agregar un producto al carrito.
-
-GET /api/carts/:cid → Obtener un carrito por ID.
-
-DELETE /api/carts/:cid/products/:pid → Eliminar un producto del carrito.
-
-DELETE /api/carts/:cid → Eliminar un carrito especifico por ID.
-
-PUT /api/carts/:cid → Reemplaza todos los productos del carrito por req.body.
-
-PUT /api/carts/:cid/products/:pid → Actualiza solo la cantidad de un producto en el carrito.
+POST   /api/carts
+POST   /api/carts/:cid/products/:pid
+GET    /api/carts/:cid
+DELETE /api/carts/:cid/products/:pid
+DELETE /api/carts/:cid
+PUT    /api/carts/:cid
+PUT    /api/carts/:cid/products/:pid
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `cid`      | `number` | **Required**. Id del carrito |
-| `pid`      | `number` | **Required**. Id del producto a agregar o eliminar |
+| Parameter | Type     | Description |
+|-----------|----------|-------------|
+| `cid`     | `string` | **Required**. Id del carrito |
+| `pid`     | `string` | **Required**. Id del producto a agregar o eliminar |
 
+---
+
+### Users (básico para integración con mocks)
+```http
+GET    /api/users
+GET    /api/users/:uid
+POST   /api/users
+```
+- Los usuarios incluyen: `first_name`, `last_name`, `email`, `password` (encriptado con bcrypt), `role` (`user` o `admin`), y `pets` (array de ObjectId o vacío por defecto).
+
+---
+
+### Pets
+```http
+GET    /api/pets
+GET    /api/pets/:pid
+POST   /api/pets
+```
+- Las mascotas incluyen: `name`, `species` y `owner` (ObjectId del usuario dueño, opcional).
+
+---
+
+### Mocks (nueva funcionalidad)
+**Ruta base:** `/api/mocks`
+
+```http
+GET    /api/mocks/mockingusers?count=<n>
+GET    /api/mocks/mockingpets?count=<n>
+POST   /api/mocks/generateData
+```
+
+#### GET `/mockingusers`
+Genera `n` usuarios ficticios (por defecto 50), sin insertarlos en la base de datos.  
+- Contraseña por defecto: `"coder123"` (encriptada con bcrypt).
+- Rol aleatorio entre `user` y `admin`.
+- `pets` inicial como array vacío.
+- Campos con formato de documento MongoDB.
+
+#### GET `/mockingpets`
+Genera `n` mascotas ficticias, sin insertarlas en la base de datos.
+
+#### POST `/generateData`
+Genera e inserta en la base de datos usuarios y mascotas según los parámetros recibidos.  
+**Body ejemplo:**
+```json
+{
+  "users": 10,
+  "pets": 5
+}
+```
+- Inserta los documentos en las colecciones `users` y `pets` de la base configurada (`BackEndIII` en MongoDB Atlas).
+- Retorna cantidad insertada y `_id` de cada documento.
+
+---
+
+## Tech Stack
+
+**Server:** Node.js + Express.js  
+**DB:** MongoDB Atlas (colecciones: `products`, `carts`, `users`, `pets`)  
+**Dependencias clave:**  
+- express  
+- dotenv  
+- mongoose + mongoose-paginate-v2  
+- bcrypt (hash de contraseñas)  
+- @faker-js/faker (generación de datos ficticios)  
+
+**Testing:** Postman
+
+---
+
+## Environment Variables
+
+Crear un archivo `.env` en el root del proyecto con las siguientes variables:
+
+```env
+USERMONGODB=<usuario Mongo Atlas>
+PASSWORDMONGODB=<contraseña Mongo Atlas>
+PORT=<puerto local>
+```
+
+**Nota:** La cadena de conexión (`connectionString`) en la configuración ya apunta a la base `BackEndIII`:
+```
+mongodb+srv://${USERMONGODB}:${PASSWORDMONGODB}@cluster0.noki4.mongodb.net/BackEndIII?retryWrites=true&w=majority&appName=Cluster0
+```
+
+---
+
+## Deployment
+
+Para iniciar el proyecto:
+
+```bash
+npm install
+npm run dev
+```
+
+---
 
 ## Authors
 
 - [@nec91](https://github.com/nec91/ProjectCicchini)
-
-
-## Tech Stack
-
-**Server:** NodeJS
-**Dependences:** Express, dotenv, mongoose, mongoose-paginate-v2
-**Testing:** POSTMAN
-**DB:** MongoDB
-
-
-## Environment Variables
-
-Para correr este proyecto es necesario crear un archivi .ENV, donde se introduciran las siguientes variables de entorno. La clave de las mismas serán las siguientes:
-
-`USERMONGODB`
-
-`PASSWORDMONGODB`
-
-Los valores seran proporcionados por el administrador de dicho proyecto en un ambiente seguro.
-
-## Deployment
-
-Para inicializar el proyecto, posicionarse dentro de la carpeta /ProjectCicchini e instalar node_modules con el siguiente comando
-
-```bash
-  npm install
-```
-
-Las dependecias ya se encuentran instaladas en el package.json
-
-Caso contrario instalarlas con el siguiente comando
-
-```bash
-  npm install express dotenv mongoose mongoose-paginate-v2
-```
-
-Para levantar el servidor utilizar el siguiente comando (en el caso de usar el package.json que figura en el repositorio de GitHub)
-
-```bash
-  npm run dev
-```
-

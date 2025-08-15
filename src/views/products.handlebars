@@ -1,0 +1,43 @@
+<div>
+  <h1>Productos disponibles para compra</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Código</th>
+        <th>Precio</th>
+        <th>Stock total</th>
+        <th>Cantidad</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each products}}
+      <tr data-product-id="{{this._id}}">
+        <td>{{this.title}}</td>
+        <td>{{this.code}}</td>
+        <td>${{this.price}}</td>
+        <td>{{this.quantity}}</td>
+        <td>
+          <button type="button" class="decrease-btn">➖</button>
+          <span class="quantity-value">0</span>
+          <button type="button" class="increase-btn">➕</button>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <br>
+
+  <form id="finalizePurchaseForm">
+    <button type="submit">🛒 Ir al carrito</button>
+  </form>
+
+  <br>
+  <p><a href="/users">Volver al perfil</a></p>
+  <p><a href="/api/sessions/logout">Cerrar sesión</a></p>
+</div>
+
+<script src="/js/products.js"></script>
